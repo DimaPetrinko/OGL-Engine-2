@@ -1,14 +1,17 @@
 #pragma once
 
-class Application
+namespace OGLEngine2
 {
-public:
-	Application();
-	~Application();
-private:
+	class Application
+	{
+	public:
+		Application();
+		~Application();
+	private:
 
-public:
-	virtual void Start();
-	virtual void Update();
-	virtual void Stop();
-};
+	public:
+		virtual void Start();
+		virtual void Update();
+		virtual void Stop();
+	};
+}

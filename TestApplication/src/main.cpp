@@ -1,7 +1,7 @@
 #include <iostream>
 #include "../../OGLEngine2/include/OGLEngine2.h"
 
-class TestApplication : public Application {};
+class TestApplication : public OGLEngine2::Application {};
 
 int main()
 {
