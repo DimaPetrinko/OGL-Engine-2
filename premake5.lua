@@ -49,7 +49,8 @@ workspace "OGL-Engine-2"
 		includedirs
 		{
 			"%{prj.name}/src/",
-			"%{prj.name}/include/"
+			"%{prj.name}/include/",
+			"OGLEngine2/src/"
 		}
 		filter {"platforms:Win64"}
 			defines { "PLATFORM_WIN64" }
