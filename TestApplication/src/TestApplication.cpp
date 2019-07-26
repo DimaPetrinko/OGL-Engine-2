@@ -6,19 +6,19 @@ class TestApplication : public OGLEngine2::Application
 public:
 	bool OnStart() override
 	{
-		std::cout << "Started\n";
+		OGLEngine2::Logger::Log("Started\n");
 		return true;
 	}
 
 	bool OnUpdate() override
 	{
-		std::cout << "Running...\n";
+		OGLEngine2::Logger::Log("Running...");
 		return true;
 	}
 
 	bool OnExit() override
 	{
-		std::cout << "Stopped\n";
+		OGLEngine2::Logger::Log("Stopped\n");
 		return true;
 	}
 };
