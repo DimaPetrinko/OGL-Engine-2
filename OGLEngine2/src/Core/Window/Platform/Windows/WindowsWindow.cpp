@@ -1,5 +1,4 @@
 #include <OGLEpch.h>
-#include "Core/Logging/Logger.h"
 #include "WindowsWindow.h"
 
 namespace OGLEngine2

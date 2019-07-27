@@ -12,6 +12,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "Core/Logging/Logger.h"
+
 #ifdef PLATFORM_WIN64
 #include <Windows.h>
 #endif // PLATFORM_WIN64

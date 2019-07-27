@@ -1,5 +1,4 @@
 #include <OGLEpch.h>
-#include "Logger.h"
 
 namespace OGLEngine2
 {
