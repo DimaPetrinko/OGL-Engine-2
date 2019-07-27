@@ -13,3 +13,4 @@ obj/
 !MakeProject/[Mm]akefile
 *.sln
 *.vcxproj
+*.vcxproj.*

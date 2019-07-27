@@ -1,7 +1,5 @@
 #pragma once
 
-#include <iostream>
-
 namespace OGLEngine2
 {
 	class Logger
@@ -10,8 +8,8 @@ namespace OGLEngine2
 		Logger();
 		~Logger();
 
-		static void Log(const char* message);
-		static void LogWarning(const char* message);
-		static void LogError(const char* message);
+		static void Log(const std::string& message);
+		static void LogWarning(const std::string& message);
+		static void LogError(const std::string& message);
 	};
 }

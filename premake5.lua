@@ -26,6 +26,10 @@ workspace "OGL-Engine-2"
 	project "OGLEngine2"
 		location ("../%{wks.name}/%{prj.name}")
 		kind "StaticLib"
+
+		pchheader "OGLEpch.h"
+		pchsource "%{prj.name}/src/OGLEpch.cpp"
+
 		files "%{prj.name}/src/**"
 		includedirs 
 		{
@@ -33,6 +37,7 @@ workspace "OGL-Engine-2"
 			"%{prj.name}/include/"
 		}
 		libdirs {"%{prj.name}/lib/%{cfg.platform}"}
+
 		filter {"platforms:Win64"}
 			defines { "GLEW_STATIC", "PLATFORM_WIN64" }
 			links {"glfw3", "glew32s", "opengl32", "Gdi32", "legacy_stdio_definitions"}
@@ -45,6 +50,7 @@ workspace "OGL-Engine-2"
 	project "TestApplication"
 		location ("../%{wks.name}/%{prj.name}")
 		kind "ConsoleApp"
+
 		files "%{prj.name}/src/**"
 		includedirs
 		{
@@ -52,9 +58,11 @@ workspace "OGL-Engine-2"
 			"%{prj.name}/include/",
 			"OGLEngine2/src/"
 		}
+
 		filter {"platforms:Win64"}
 			defines { "PLATFORM_WIN64" }
 		filter {"platforms:Linux64"}
 			defines { "PLATFORM_LINUX64" }
 		filter {}
+
 		links {"OGLEngine2"}

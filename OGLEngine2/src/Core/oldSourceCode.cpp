@@ -4,6 +4,8 @@
 // To manually build and run type make (or make config=debug) into the terminal
 // followed by ./build/bin/PremakeProject_Debug/PremakeProject
 
+#include <OGLEpch.h>
+
 #include <iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -66,7 +68,7 @@ private:
 	}
 };
 
-int main(int argc, char** argv)
+int oldMain(int argc, char** argv)
 {
 	GLFWwindow* window;
 

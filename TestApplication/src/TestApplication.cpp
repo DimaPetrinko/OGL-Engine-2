@@ -1,4 +1,3 @@
-#include <iostream>
 #include "OGLEngine2.h"
 
 class TestApplication : public OGLEngine2::Application
