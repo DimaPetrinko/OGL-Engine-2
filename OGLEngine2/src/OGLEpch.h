@@ -1,5 +1,3 @@
-#pragma once
-
 #include <iostream>
 #include <memory>
 #include <utility>
@@ -17,4 +15,3 @@
 #ifdef PLATFORM_WIN64
 #include <Windows.h>
 #endif // PLATFORM_WIN64
-

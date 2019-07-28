@@ -1,3 +1,5 @@
+#pragma once
+
 #include <OGLEpch.h>
 #include "Core/Window/Window.h"
 #include "GLFW/glfw3.h"
@@ -10,7 +12,7 @@ namespace OGLEngine2
 		WindowsWindow(const WindowData& data);
 		virtual ~WindowsWindow();
 
-		void OnUpdate() override;
+		bool OnUpdate() override;
 
 		inline unsigned int GetWidth() const override { return data.width; }
 		inline unsigned int GetHeight() const override { return data.height; }
@@ -23,6 +25,5 @@ namespace OGLEngine2
 		GLFWwindow* window;
 
 		WindowData data;
-
 	};
 }

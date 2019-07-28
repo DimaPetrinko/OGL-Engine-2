@@ -5,7 +5,7 @@ class TestApplication : public OGLEngine2::Application
 public:
 	bool OnStart() override
 	{
-		OGLEngine2::Logger::Log("Started\n");
+		OGLEngine2::Logger::Log("Started TestApplication");
 		return true;
 	}
 
@@ -17,7 +17,7 @@ public:
 
 	bool OnExit() override
 	{
-		OGLEngine2::Logger::Log("Stopped\n");
+		OGLEngine2::Logger::Log("Stopped TestApplication");
 		return true;
 	}
 };

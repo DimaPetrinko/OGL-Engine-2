@@ -63,6 +63,7 @@ workspace "OGL-Engine-2"
 			defines { "PLATFORM_WIN64" }
 		filter {"platforms:Linux64"}
 			defines { "PLATFORM_LINUX64" }
+			links {"glfw", "GLEW", "GL"}
 		filter {}
 
 		links {"OGLEngine2"}

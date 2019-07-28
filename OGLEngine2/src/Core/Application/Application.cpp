@@ -16,8 +16,7 @@ namespace OGLEngine2
 		running = true;
 		while (running)
 		{
-			window->OnUpdate();
-			running = OnUpdate();
+			running = OnUpdate() && window->OnUpdate();
 		}
 		OnExit();
 	}

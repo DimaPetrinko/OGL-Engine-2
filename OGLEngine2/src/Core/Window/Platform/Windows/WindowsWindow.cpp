@@ -26,9 +26,6 @@ namespace OGLEngine2
 		this->data.width = data.width;
 		this->data.height = data.height;
 
-		Logger::Log("Creating new window " + data.title + " (" + std::to_string(data.width)
-			+ ", " + std::to_string(data.height) + ")");
-
 		if (!glfwInitialized)
 		{
 			int success = glfwInit();
@@ -39,12 +36,16 @@ namespace OGLEngine2
 				return;
 			}
 			glfwInitialized = true;
+			Logger::Log("Initialized GLFW");
 		}
 
 		window = glfwCreateWindow(data.width, data.height, data.title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(window);
 		glfwSetWindowUserPointer(window, &(this->data));
 		glfwSwapInterval(1);
+
+		Logger::Log("Created new window " + data.title + " (" + std::to_string(data.width)
+			+ ", " + std::to_string(data.height) + ")");
 	}
 
 	void WindowsWindow::Shutdown()
@@ -52,9 +53,10 @@ namespace OGLEngine2
 		glfwDestroyWindow(window);
 	}
 
-	void WindowsWindow::OnUpdate()
+	bool WindowsWindow::OnUpdate()
 	{
 		glfwPollEvents();
 		glfwSwapBuffers(window);
+		return !glfwWindowShouldClose(window);
 	}
 }
