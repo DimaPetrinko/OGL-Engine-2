@@ -10,6 +10,7 @@ namespace OGLEngine2
 	{
 		float x, y;
 
+		Vector2();
 		Vector2(float x, float y);
 
 		void Normalize();
@@ -37,5 +38,10 @@ namespace OGLEngine2
 		static float Dot(const Vector2& a, const Vector2& b);
 		static Vector2 Cross(const Vector2& a);
 		static float Angle(const Vector2& a, const Vector2& b);
+
+		inline static Vector2 One() { return Vector2(1, 1); }
+		inline static Vector2 Zero() { return Vector2(0, 0); }
+		inline static Vector2 Up() { return Vector2(0, 1); }
+		inline static Vector2 Right() { return Vector2(1, 0); }
 	};
 }
