@@ -1,23 +1,23 @@
 #include "OGLEngine2.h"
 
-class TestApplication : public OGLEngine2::Application
+class TestApplication : public Application
 {
 public:
 	bool OnStart() override
 	{
-		OGLEngine2::Logger::Log("Started TestApplication");
+		Logger::Log("Started TestApplication");
 		return true;
 	}
 
 	bool OnUpdate() override
 	{
-		OGLEngine2::Logger::Log("Running...");
+		Logger::Log("Running...");
 		return true;
 	}
 
 	bool OnExit() override
 	{
-		OGLEngine2::Logger::Log("Stopped TestApplication");
+		Logger::Log("Stopped TestApplication");
 		return true;
 	}
 };
