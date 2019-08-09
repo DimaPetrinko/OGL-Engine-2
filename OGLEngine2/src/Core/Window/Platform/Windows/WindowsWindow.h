@@ -14,8 +14,8 @@ namespace OGLEngine2
 
 		bool OnUpdate() override;
 
-		inline unsigned int GetWidth() const override { return data.width; }
-		inline unsigned int GetHeight() const override { return data.height; }
+		unsigned int GetWidth() const override { return data.width; }
+		unsigned int GetHeight() const override { return data.height; }
 
 	private:
 		virtual void Init(const WindowData& data);

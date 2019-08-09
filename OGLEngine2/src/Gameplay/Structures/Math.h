@@ -17,22 +17,22 @@ namespace OGLEngine2
 		Vector2 Normalized() const;
 		float Magnitude() const;
 
-		Vector2 operator+ (Vector2 other);
+		Vector2 operator+ (Vector2 other) const;
 		void operator+= (Vector2 other);
 
-		Vector2 operator- (Vector2 other);
+		Vector2 operator- (Vector2 other) const;
 		void operator-= (Vector2 other);
 
-		Vector2 operator* (float scale);
+		Vector2 operator* (float scale) const;
 		void operator*= (float scale);
 
-		Vector2 operator/ (float scale);
+		Vector2 operator/ (float scale) const;
 		void operator/= (float scale);
 
-		Vector2 operator* (Vector2 other);
+		Vector2 operator* (Vector2 other) const;
 		void operator*= (Vector2 other);
 
-		Vector2 operator/ (Vector2 other);
+		Vector2 operator/ (Vector2 other) const;
 		void operator/= (Vector2 other);
 		
 		static float Dot(const Vector2& a, const Vector2& b);

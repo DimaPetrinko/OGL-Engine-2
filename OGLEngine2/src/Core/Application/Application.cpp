@@ -8,7 +8,7 @@ namespace OGLEngine2
 		window = std::unique_ptr<Window>(Window::Create());
 	}
 
-	Application::~Application() {}
+	Application::~Application() = default;
 
 	void Application::Run()
 	{

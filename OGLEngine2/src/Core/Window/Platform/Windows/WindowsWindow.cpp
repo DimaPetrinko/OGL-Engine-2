@@ -12,12 +12,13 @@ namespace OGLEngine2
 
 	WindowsWindow::WindowsWindow(const WindowData& data)
 	{
-		Init(data);
+		window = nullptr;
+		WindowsWindow::Init(data);
 	}
 
 	WindowsWindow::~WindowsWindow() 
 	{
-		Shutdown();
+		WindowsWindow::Shutdown();
 	}
 
 	void WindowsWindow::Init(const WindowData& data)
@@ -28,7 +29,7 @@ namespace OGLEngine2
 
 		if (!glfwInitialized)
 		{
-			int success = glfwInit();
+			auto success = glfwInit();
 			// TODO: make a macro
 			if (!success)
 			{

@@ -3,12 +3,9 @@
 
 namespace OGLEngine2
 {
-	Vector2::Vector2()
-	{
-		Vector2::Vector2(0, 0);
-	}
+	Vector2::Vector2() : Vector2(0,0) {}
 
-	Vector2::Vector2(float x, float y) 
+	Vector2::Vector2(const float x, const float y) 
 	{
 		this->x = x;
 		this->y = y;
@@ -16,13 +13,13 @@ namespace OGLEngine2
 
 	void Vector2::Normalize()
 	{
-		float m = Magnitude();
+		auto m = Magnitude();
 		x /= m;
 		y /= m;
 	}
 	Vector2 Vector2::Normalized() const
 	{
-		float m = Magnitude();
+		auto m = Magnitude();
 		return Vector2(x / m, y / m);
 	}
 	float Vector2::Magnitude() const
@@ -30,61 +27,61 @@ namespace OGLEngine2
 		return std::sqrt(x * x + y * y);
 	}
 
-	Vector2 Vector2::operator+ (Vector2 other)
+	Vector2 Vector2::operator+ (const Vector2 other) const
 	{
 		return Vector2(x + other.x, y + other.y);
 	}
-	void Vector2::operator+= (Vector2 other)
+	void Vector2::operator+= (const Vector2 other)
 	{
 		x += other.x;
 		y += other.y;
 	}
 
-	Vector2 Vector2::operator- (Vector2 other)
+	Vector2 Vector2::operator- (const Vector2 other) const
 	{
 		return Vector2(x - other.x, y - other.y);
 	}
-	void Vector2::operator-= (Vector2 other)
+	void Vector2::operator-= (const Vector2 other)
 	{
 		x -= other.x;
 		y -= other.y;
 	}
 
-	Vector2 Vector2::operator* (float scale)
+	Vector2 Vector2::operator* (const float scale) const
 	{
 		return Vector2(x * scale, y * scale);
 	}
-	void Vector2::operator*= (float scale)
+	void Vector2::operator*= (const float scale)
 	{
 		x *= scale;
 		y *= scale;
 	}
 
-	Vector2 Vector2::operator/ (float scale)
+	Vector2 Vector2::operator/ (const float scale) const
 	{
 		return Vector2(x / scale, y / scale);
 	}
-	void Vector2::operator/= (float scale)
+	void Vector2::operator/= (const float scale)
 	{
 		x /= scale;
 		y /= scale;
 	}
 
-	Vector2 Vector2::operator* (Vector2 other)
+	Vector2 Vector2::operator* (const Vector2 other) const
 	{
 		return Vector2(x * other.x, y * other.y);
 	}
-	void Vector2::operator*= (Vector2 other)
+	void Vector2::operator*= (const Vector2 other)
 	{
 		x *= other.x;
 		y *= other.y;
 	}
 
-	Vector2 Vector2::operator/ (Vector2 other)
+	Vector2 Vector2::operator/ (const Vector2 other) const
 	{
 		return Vector2(x / other.x, y / other.y);
 	}
-	void Vector2::operator/= (Vector2 other)
+	void Vector2::operator/= (const Vector2 other)
 	{
 		x /= other.x;
 		y /= other.y;

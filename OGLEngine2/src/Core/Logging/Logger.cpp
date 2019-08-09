@@ -2,8 +2,8 @@
 
 namespace OGLEngine2
 {
-	Logger::Logger() {}
-	Logger::~Logger() {}
+	Logger::Logger() = default;
+	Logger::~Logger() = default;
 
 	void Logger::Log(const std::string& message)
 	{

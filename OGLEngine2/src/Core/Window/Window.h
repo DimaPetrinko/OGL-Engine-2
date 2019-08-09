@@ -1,4 +1,5 @@
 #pragma once
+//#include <utility>
 
 namespace OGLEngine2
 {
@@ -8,14 +9,14 @@ namespace OGLEngine2
 		unsigned int width;
 		unsigned int height;
 
-		WindowData(const std::string& title = "OGL Engine 2", unsigned int width = 1280, unsigned int height = 720)
-			: title(title), width(width), height(height) {}
+		WindowData(std::string title = "OGL Engine 2", const unsigned int width = 1280, const unsigned int height = 720)
+			: title(std::move(title)), width(width), height(height) {}
 	};
 
 	class Window
 	{
 	public:
-		virtual ~Window() {}
+		virtual ~Window() = default;
 
 		virtual bool OnUpdate() = 0;
 

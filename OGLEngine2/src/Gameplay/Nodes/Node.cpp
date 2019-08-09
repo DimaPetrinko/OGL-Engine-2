@@ -6,10 +6,10 @@ namespace OGLEngine2
 	Node::Node(const std::string& name, Node* const parent)
 	{
 		this->name = name;
-		SetParent(parent);
+		Node::SetParent(parent);
 	}
 
-	Node::~Node() {}
+	Node::~Node() = default;
 
 	void Node::SetParent(Node* const newParent)
 	{	

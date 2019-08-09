@@ -12,7 +12,7 @@ namespace OGLEngine2
 
 	TransformNode::~TransformNode()
 	{
-		Stop();
+		TransformNode::Stop();
 	}
 
 	void TransformNode::Start()
