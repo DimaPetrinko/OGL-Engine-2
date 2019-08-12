@@ -1,5 +1,4 @@
 #pragma once
-//#include <utility>
 
 namespace OGLEngine2
 {
@@ -11,6 +10,20 @@ namespace OGLEngine2
 
 		WindowData(std::string title = "OGL Engine 2", const unsigned int width = 1280, const unsigned int height = 720)
 			: title(std::move(title)), width(width), height(height) {}
+
+		void CopyTo(WindowData*other) const
+		{
+			other->width = height;
+			other->height = height;
+			other->title = title;
+		}
+
+		void CopyFrom(const WindowData& other)
+		{
+			title = other.title;
+			height = other.height;
+			width = other.width;
+		}
 	};
 
 	class Window

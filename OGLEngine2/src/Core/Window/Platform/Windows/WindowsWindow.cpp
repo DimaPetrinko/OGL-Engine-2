@@ -23,9 +23,7 @@ namespace OGLEngine2
 
 	void WindowsWindow::Init(const WindowData& data)
 	{
-		this->data.title = data.title;
-		this->data.width = data.width;
-		this->data.height = data.height;
+		data.CopyTo(&this->data);
 
 		if (!glfwInitialized)
 		{
