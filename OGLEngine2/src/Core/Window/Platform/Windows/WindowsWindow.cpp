@@ -37,7 +37,7 @@ namespace OGLEngine2
 				return;
 			}
 			glfwInitialized = true;
-			Logger::Log("Initialized GLFW");
+			Logger::Log("Initialized GLFW. Version: %s\n", glfwGetVersionString());
 		}
 
 		window = glfwCreateWindow(data.width, data.height, data.title.c_str(), nullptr, nullptr);

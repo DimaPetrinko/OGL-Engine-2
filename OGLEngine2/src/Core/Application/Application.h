@@ -8,7 +8,7 @@ namespace OGLEngine2
 	{
 	public:
 		Application();
-		virtual ~Application();
+		virtual ~Application() = 0;
 
 		virtual bool OnStart() = 0;
 		virtual bool OnUpdate() = 0;

@@ -5,6 +5,7 @@ namespace OGLEngine2
 {
 	Application::Application()
 	{
+		Logger::Log("Initializing application");
 		window = std::unique_ptr<Window>(Window::Create());
 	}
 

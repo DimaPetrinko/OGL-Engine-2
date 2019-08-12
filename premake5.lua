@@ -56,11 +56,14 @@ workspace "OGL-Engine-2"
 		{
 			"%{prj.name}/src/",
 			"%{prj.name}/include/",
-			"OGLEngine2/src/"
+			"OGLEngine2/src/",
+			"OGLEngine2/include"
 		}
+		libdirs {"OGLEngine2/lib/%{cfg.platform}"}
 
 		filter {"platforms:Win64"}
-			defines { "PLATFORM_WIN64" }
+			defines { "GLEW_STATIC", "PLATFORM_WIN64" }
+			links {"glfw3", "glew32s", "opengl32", "Gdi32", "legacy_stdio_definitions"}
 		filter {"platforms:Linux64"}
 			defines { "PLATFORM_LINUX64" }
 			links {"glfw", "GLEW", "GL"}
