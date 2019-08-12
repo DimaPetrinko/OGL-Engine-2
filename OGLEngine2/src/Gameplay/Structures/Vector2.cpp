@@ -24,7 +24,7 @@ namespace OGLEngine2
 	}
 	float Vector2::Magnitude() const
 	{
-		return std::sqrt(x * x + y * y);
+		return sqrt(x * x + y * y);
 	}
 
 	Vector2 Vector2::operator+ (const Vector2 other) const
@@ -98,6 +98,6 @@ namespace OGLEngine2
 	/*Angle in radians*/
 	float Vector2::Angle(const Vector2& a, const Vector2& b)
 	{
-		return std::acosf(Dot(a, b) / (a.Magnitude() * b.Magnitude()));
+		return acosf(Dot(a, b) / (a.Magnitude() * b.Magnitude()));
 	}
 }
