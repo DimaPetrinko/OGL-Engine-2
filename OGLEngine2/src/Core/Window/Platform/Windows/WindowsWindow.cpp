@@ -38,6 +38,10 @@ namespace OGLEngine2
 			Logger::Log("Initialized GLFW. Version: %s\n", glfwGetVersionString());
 		}
 
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
 		window = glfwCreateWindow(data.width, data.height, data.title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(window);
 		glfwSetWindowUserPointer(window, &(this->data));
