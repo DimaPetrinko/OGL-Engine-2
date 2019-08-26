@@ -1,6 +1,12 @@
 #include "OGLEngine2.h"
 #include "GL/glew.h"
 
+#ifdef PLATFORM_WIN64
+#define WORKING_DIRECTORY ""
+#elif PLATFORM_LINUX64
+#define WORKING_DIRECTORY TestApplication/
+#endif
+
 class Quad
 {
 public:
@@ -12,7 +18,7 @@ private:
 	Vector2 transformedVertices[4];
 
 public:
-	Quad(Vector2 one, Vector2 two, Vector2 three, Vector2 four)
+	Quad(const Vector2& one, const Vector2& two, const Vector2& three, const Vector2& four)
 		: position(Vector2(0.0f, 0.0f)),
 		indices{0, 1, 2, 2, 3, 0},
 		vertices{ one, two, three, four },
@@ -23,7 +29,7 @@ public:
 
 	float* GetPositions()
 	{
-		return (float*)((Vector2*)transformedVertices);
+		return (float*)(Vector2*)transformedVertices;
 	}
 
 	unsigned int* GetIndices()
@@ -31,7 +37,7 @@ public:
 		return indices;
 	}
 
-	void Move(Vector2 direction)
+	void Move(const Vector2& direction)
 	{
 		position += direction;
 		TransformVertices();
@@ -48,11 +54,11 @@ class TestApplication : public Application
 {
 private:
 	Quad quad;
-	unsigned int buffer;
-	unsigned int indexBuffer;
-	unsigned int vertexArray;
-	unsigned int redShader;
-	unsigned int blueShader;
+	unsigned int buffer{};
+	unsigned int indexBuffer{};
+	unsigned int vertexArray{};
+	unsigned int redShader{};
+	unsigned int blueShader{};
 	Vector2 step;
 	Vector2 direction;
 	
@@ -61,9 +67,6 @@ public:
 								  Vector2(0.5f, -0.5f),
 								  Vector2(0.5f, 0.5f),
 								  Vector2(-0.5f, 0.5f))),
-						buffer(0),
-						redShader(0),
-						blueShader(0),
 						step(Vector2(0.01f, 0.005f)),
 						direction(Vector2(step.x, step.y)) {}
 
@@ -74,18 +77,18 @@ public:
 		
 		enum class ShaderType 
 		{
-			NONE = -1, VERTEX = 0, FRAGMENT = 1
+			None = -1, Vertex = 0, Fragment = 1
 		};
 
 		std::string line;
 		std::stringstream ss[2];
-		ShaderType type = ShaderType::NONE;
+		ShaderType type = ShaderType::None;
 		while (getline(stream, line))
 		{
 			if (line.find("#shader") != std::string::npos)
 			{
-				if (line.find("vertex") != std::string::npos) type = ShaderType::VERTEX;
-				else if (line.find("fragment") != std::string::npos) type = ShaderType::FRAGMENT;
+				if (line.find("vertex") != std::string::npos) type = ShaderType::Vertex;
+				else if (line.find("fragment") != std::string::npos) type = ShaderType::Fragment;
 			}
 			else ss[(int)type] << line << "\n";
 		}
@@ -149,9 +152,9 @@ public:
 		glGenVertexArrays(1, &vertexArray);
 		glBindVertexArray(vertexArray);
 
-		auto[vertexShaderSource1, fragmentShaderSource1] = ParseShader("TestApplication/res/shaders/BasicRed.shader");
+		auto[vertexShaderSource1, fragmentShaderSource1] = ParseShader(WORKING_DIRECTORY "res/shaders/BasicRed.shader");
 		redShader = CreateShader(vertexShaderSource1, fragmentShaderSource1);
-		auto[vertexShaderSource2, fragmentShaderSource2] = ParseShader("TestApplication/res/shaders/BasicBlue.shader");
+		auto[vertexShaderSource2, fragmentShaderSource2] = ParseShader(WORKING_DIRECTORY"res/shaders/BasicBlue.shader");
 		blueShader = CreateShader(vertexShaderSource2, fragmentShaderSource2);
 
 		return true;
@@ -183,7 +186,7 @@ public:
 
 		glEnableVertexAttribArray(0);
 		// glEnableVertexAttribArray(attribute index);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr);
 		// glVertexAttribPointer(attribute index, elements count, GL_FLOAT, normalize (for 0 .. 255 byte or smth),
 		// size of vertex in bytes (includes texture coords), starting index (in bytes));
 
