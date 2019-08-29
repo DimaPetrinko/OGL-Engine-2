@@ -4,8 +4,12 @@
 #ifdef PLATFORM_WIN64
 #define WORKING_DIRECTORY ""
 #elif PLATFORM_LINUX64
-#define WORKING_DIRECTORY TestApplication/
+#define WORKING_DIRECTORY "TestApplication/"
 #endif
+
+#define GlCall(x) x;\
+while (unsigned int error = glGetError())\
+Logger::LogError("(" + std::to_string(error) + ") in " + #x + " " + __FILE__ + ":" + std::to_string(__LINE__));
 
 class Quad
 {
@@ -97,21 +101,21 @@ public:
 
 	static unsigned int CompileShader(unsigned int type, const std::string& source)
 	{
-		unsigned int id = glCreateShader(type);
+		unsigned int id = GlCall(glCreateShader(type));
 		const char* src = source.c_str();
-		glShaderSource(id, 1, &src, nullptr);
-		glCompileShader(id);
+		GlCall(glShaderSource(id, 1, &src, nullptr));
+		GlCall(glCompileShader(id));
 
 		int result;
-		glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+		GlCall(glGetShaderiv(id, GL_COMPILE_STATUS, &result));
 		if (result == GL_FALSE)
 		{
 			int length;
-			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+			GlCall(glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length));
 			char* message = (char*)alloca(length * sizeof(char));
-			glGetShaderInfoLog(id, length, &length, message);
+			GlCall(glGetShaderInfoLog(id, length, &length, message));
 			Logger::LogError("Failed to compile shader! %s\n", message);
-			glDeleteShader(id);
+			GlCall(glDeleteShader(id));
 			return 0;
 		}
 
@@ -120,16 +124,16 @@ public:
 
 	static unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader)
 	{
-		unsigned int program = glCreateProgram();
+		unsigned int program = GlCall(glCreateProgram());
 		unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
 		unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
-		glAttachShader(program, vs);
-		glAttachShader(program, fs);
-		glLinkProgram(program);
-		glValidateProgram(program);
+		GlCall(glAttachShader(program, vs));
+		GlCall(glAttachShader(program, fs));
+		GlCall(glLinkProgram(program));
+		GlCall(glValidateProgram(program));
 
-		glDeleteShader(vs);
-		glDeleteShader(fs);
+		GlCall(glDeleteShader(vs));
+		GlCall(glDeleteShader(fs));
 
 		return program;
 	}
@@ -146,11 +150,11 @@ public:
 		}
 		Logger::Log("GL version: %s\n", glGetString(GL_VERSION));
 
-		glGenBuffers(1, &buffer);
-		glGenBuffers(1, &indexBuffer);
+		GlCall(glGenBuffers(1, &buffer));
+		GlCall(glGenBuffers(1, &indexBuffer));
 
-		glGenVertexArrays(1, &vertexArray);
-		glBindVertexArray(vertexArray);
+		GlCall(glGenVertexArrays(1, &vertexArray));
+		GlCall(glBindVertexArray(vertexArray));
 
 		auto[vertexShaderSource1, fragmentShaderSource1] = ParseShader(WORKING_DIRECTORY "res/shaders/BasicRed.shader");
 		redShader = CreateShader(vertexShaderSource1, fragmentShaderSource1);
@@ -162,7 +166,7 @@ public:
 
 	bool OnUpdate() override
 	{
-		Logger::Log("Running...");
+		// Logger::Log("Running...");
 		
 		if (quad.position.x > 0.5f) direction.x = -step.x;
 		else if (quad.position.x < -0.5f) direction.x = step.x;
@@ -171,37 +175,37 @@ public:
 
 		quad.Move(direction);
 
-		glClear(GL_COLOR_BUFFER_BIT);
+		GlCall(glClear(GL_COLOR_BUFFER_BIT));
 
 		static float* positions = quad.GetPositions();
 		static unsigned int* indices = quad.GetIndices();
 
-		glBindBuffer(GL_ARRAY_BUFFER, buffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+		GlCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));
+		GlCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer));
 
-		glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), positions, GL_DYNAMIC_DRAW);
+		GlCall(glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), positions, GL_DYNAMIC_DRAW));
 		// glBufferData(GL_ARRAY_BUFFER, size of data we're pushing, the data itself, can be static, dynamic.. see documentation);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_DYNAMIC_DRAW);
+		GlCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_DYNAMIC_DRAW));
 		// glBufferData(GL_ARRAY_BUFFER, size of data we're pushing, the data itself, can be static, dynamic.. see documentation);
 
-		glEnableVertexAttribArray(0);
+		GlCall(glEnableVertexAttribArray(0));
 		// glEnableVertexAttribArray(attribute index);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr);
+		GlCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr));
 		// glVertexAttribPointer(attribute index, elements count, GL_FLOAT, normalize (for 0 .. 255 byte or smth),
 		// size of vertex in bytes (includes texture coords), starting index (in bytes));
 
-		glUseProgram(redShader);
+		GlCall(glUseProgram(redShader));
 
 		// glDrawArrays(GL_TRIANGLES, 0, 3);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+		GlCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 		
 		return true;
 	}
 
 	bool OnExit() override
 	{
-		glDeleteProgram(redShader);
-		glDeleteProgram(blueShader);
+		GlCall(glDeleteProgram(redShader));
+		GlCall(glDeleteProgram(blueShader));
 		Logger::Log("Stopped TestApplication");
 		return true;
 	}

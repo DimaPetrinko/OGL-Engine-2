@@ -8,7 +8,8 @@
             "defines": [
                 "_DEBUG",
                 "UNICODE",
-                "_UNICODE"
+                "_UNICODE",
+                "PLATFORM_WIN64"
             ],
             "compilerPath": "G:/Microsoft Visual Studio/2019/BuildTools/VC/Tools/MSVC/14.21.27702/bin/Hostx64/x64/cl.exe",
             "intelliSenseMode": "msvc-x64",
@@ -23,7 +24,8 @@
             "defines": [
                 "_DEBUG",
                 "UNICODE",
-                "_UNICODE"
+                "_UNICODE",
+                "PLATFORM_LINUX64"
             ],
             "compilerPath": "/usr/bin/gcc",
             "intelliSenseMode": "clang-x64",
