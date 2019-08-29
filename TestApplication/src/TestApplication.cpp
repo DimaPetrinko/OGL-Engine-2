@@ -59,10 +59,10 @@ class TestApplication : public Application
 private:
 	Quad quad;
 	unsigned int buffer{};
-	unsigned int indexBuffer{};
-	unsigned int vertexArray{};
-	unsigned int redShader{};
-	unsigned int blueShader{};
+	unsigned int ibo{};
+	unsigned int vao{};
+	unsigned int basicShader{};
+	int colorUniformLocation{};
 	Vector2 step;
 	Vector2 direction;
 	
@@ -150,16 +150,29 @@ public:
 		}
 		Logger::Log("GL version: %s\n", glGetString(GL_VERSION));
 
+		GlCall(glGenVertexArrays(1, &vao));
 		GlCall(glGenBuffers(1, &buffer));
-		GlCall(glGenBuffers(1, &indexBuffer));
+		GlCall(glGenBuffers(1, &ibo));
 
-		GlCall(glGenVertexArrays(1, &vertexArray));
-		GlCall(glBindVertexArray(vertexArray));
+		GlCall(glBindVertexArray(vao));
+		
+		GlCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));
+		GlCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
+		GlCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), quad.GetIndices(), GL_DYNAMIC_DRAW));
+		GlCall(glEnableVertexAttribArray(0));
+		GlCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr));
+		// glVertexAttribPointer(attribute index, elements count, GL_FLOAT, normalize (for 0 .. 255 byte or smth),
+		// size of vertex in bytes (includes texture coords), starting index (in bytes));
 
-		auto[vertexShaderSource1, fragmentShaderSource1] = ParseShader(WORKING_DIRECTORY "res/shaders/BasicRed.shader");
-		redShader = CreateShader(vertexShaderSource1, fragmentShaderSource1);
-		auto[vertexShaderSource2, fragmentShaderSource2] = ParseShader(WORKING_DIRECTORY"res/shaders/BasicBlue.shader");
-		blueShader = CreateShader(vertexShaderSource2, fragmentShaderSource2);
+		GlCall(glBindVertexArray(0));
+
+		GlCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+		GlCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+		GlCall(glUseProgram(0));
+
+		auto[vertexShaderSource, fragmentShaderSource] = ParseShader(WORKING_DIRECTORY "res/shaders/Basic.shader");
+		basicShader = CreateShader(vertexShaderSource, fragmentShaderSource);
+		colorUniformLocation = GlCall(glGetUniformLocation(basicShader, "u_color"));
 
 		return true;
 	}
@@ -175,40 +188,28 @@ public:
 
 		quad.Move(direction);
 
-		GlCall(glClear(GL_COLOR_BUFFER_BIT));
-
 		static float* positions = quad.GetPositions();
 		static unsigned int* indices = quad.GetIndices();
+		Vector2 positionNormalized = quad.position + Vector2::One() / 2;
 
+		GlCall(glClear(GL_COLOR_BUFFER_BIT));
+
+		GlCall(glUseProgram(basicShader));
+		GlCall(glUniform4f(colorUniformLocation, positionNormalized.x, 0.0f, positionNormalized.y, 1.0f));
+
+		GlCall(glBindVertexArray(vao));
 		GlCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));
-		GlCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer));
-
 		GlCall(glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), positions, GL_DYNAMIC_DRAW));
 		// glBufferData(GL_ARRAY_BUFFER, size of data we're pushing, the data itself, can be static, dynamic.. see documentation);
-		GlCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_DYNAMIC_DRAW));
-		// glBufferData(GL_ARRAY_BUFFER, size of data we're pushing, the data itself, can be static, dynamic.. see documentation);
-
-		GlCall(glEnableVertexAttribArray(0));
-		// glEnableVertexAttribArray(attribute index);
-		GlCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr));
-		// glVertexAttribPointer(attribute index, elements count, GL_FLOAT, normalize (for 0 .. 255 byte or smth),
-		// size of vertex in bytes (includes texture coords), starting index (in bytes));
-
-		GlCall(glUseProgram(redShader));
-		auto location = GlCall(glGetUniformLocation(redShader, "u_color"));
-		Vector2 positionNormalized = quad.position + Vector2::One() / 2;
-		GlCall(glUniform4f(location, positionNormalized.x, 0.0f, positionNormalized.y, 1.0f));
-
-		// glDrawArrays(GL_TRIANGLES, 0, 3);
 		GlCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
-		
+		GlCall(glBindVertexArray(0));
+
 		return true;
 	}
 
 	bool OnExit() override
 	{
-		GlCall(glDeleteProgram(redShader));
-		GlCall(glDeleteProgram(blueShader));
+		GlCall(glDeleteProgram(basicShader));
 		Logger::Log("Stopped TestApplication");
 		return true;
 	}
