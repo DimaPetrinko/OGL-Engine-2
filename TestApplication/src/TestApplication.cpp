@@ -71,7 +71,7 @@ public:
 								  Vector2(0.5f, -0.5f),
 								  Vector2(0.5f, 0.5f),
 								  Vector2(-0.5f, 0.5f))),
-						step(Vector2(0.01f, 0.005f)),
+						step(Vector2(0.02f, 0.005f)),
 						direction(Vector2(step.x, step.y)) {}
 
 	static std::tuple<std::string, std::string> ParseShader(const std::string& filePath)
@@ -195,6 +195,9 @@ public:
 		// size of vertex in bytes (includes texture coords), starting index (in bytes));
 
 		GlCall(glUseProgram(redShader));
+		auto location = GlCall(glGetUniformLocation(redShader, "u_color"));
+		Vector2 positionNormalized = quad.position + Vector2::One() / 2;
+		GlCall(glUniform4f(location, positionNormalized.x, 0.0f, positionNormalized.y, 1.0f));
 
 		// glDrawArrays(GL_TRIANGLES, 0, 3);
 		GlCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
