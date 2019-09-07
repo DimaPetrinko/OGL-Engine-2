@@ -63,15 +63,16 @@ private:
 	unsigned int vao{};
 	unsigned int basicShader{};
 	int colorUniformLocation{};
+	int mvpUniformLocation{};
 	Vector2 step;
 	Vector2 direction;
 	
 public:
-	TestApplication() : quad(Quad(Vector2(-0.5f, -0.5f),
-								  Vector2(0.5f, -0.5f),
-								  Vector2(0.5f, 0.5f),
-								  Vector2(-0.5f, 0.5f))),
-						step(Vector2(0.02f, 0.005f)),
+	TestApplication() : quad(Quad(Vector2(-50.0f, -50.0f),
+								  Vector2(50.0f, -50.0f),
+								  Vector2(50.0f, 50.0f),
+								  Vector2(-50.0f, 50.0f))),
+						step(Vector2(20.f, 5.f)),
 						direction(Vector2(step.x, step.y)) {}
 
 	static std::tuple<std::string, std::string> ParseShader(const std::string& filePath)
@@ -173,6 +174,7 @@ public:
 		auto[vertexShaderSource, fragmentShaderSource] = ParseShader(WORKING_DIRECTORY "res/shaders/Basic.shader");
 		basicShader = CreateShader(vertexShaderSource, fragmentShaderSource);
 		colorUniformLocation = GlCall(glGetUniformLocation(basicShader, "u_color"));
+		mvpUniformLocation = GlCall(glGetUniformLocation(basicShader, "u_mvp"));
 
 		return true;
 	}
@@ -181,21 +183,33 @@ public:
 	{
 		// Logger::Log("Running...");
 		
-		if (quad.position.x > 0.5f) direction.x = -step.x;
-		else if (quad.position.x < -0.5f) direction.x = step.x;
-		if (quad.position.y > 0.5f) direction.y = -step.y;
-		else if (quad.position.y < -0.5f) direction.y = step.y;
+		auto w = (float)window->GetWidth();
+		auto h = (float)window->GetHeight();
+
+		if (quad.position.x > w) direction.x = -step.x;
+		else if (quad.position.x < 0) direction.x = step.x;
+		if (quad.position.y > h) direction.y = -step.y;
+		else if (quad.position.y < 0) direction.y = step.y;
 
 		quad.Move(direction);
 
 		static float* positions = quad.GetPositions();
 		static unsigned int* indices = quad.GetIndices();
-		Vector2 positionNormalized = quad.position + Vector2::One() / 2;
+		Vector2 positionNormalized = quad.position.Normalized();
 
 		GlCall(glClear(GL_COLOR_BUFFER_BIT));
 
 		GlCall(glUseProgram(basicShader));
-		GlCall(glUniform4f(colorUniformLocation, positionNormalized.x, 0.0f, positionNormalized.y, 1.0f));
+		GlCall(glUniform4f(colorUniformLocation, positionNormalized.x, 10.0f, positionNormalized.y, 1.0f));
+		
+		float mvpMatrix[16] =
+		{
+			2/w,0,	0,	-1,
+			0,	2/h,0,	-1,
+			0,	0,	1,	0,
+			0,	0,	0,	 1,
+		};
+		GlCall(glUniformMatrix4fv(mvpUniformLocation, 1, GL_TRUE, mvpMatrix));
 
 		GlCall(glBindVertexArray(vao));
 		GlCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));

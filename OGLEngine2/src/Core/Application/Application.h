@@ -16,8 +16,9 @@ namespace OGLEngine2
 
 		void Run();
 
-	private:
+	protected:
 		std::unique_ptr<Window> window;
+	private:
 		bool running = false;
 	};
 
