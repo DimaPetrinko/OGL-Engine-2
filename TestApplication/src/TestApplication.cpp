@@ -1,15 +1,15 @@
 #include "OGLEngine2.h"
 #include "GL/glew.h"
+#include "Renderer.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
+#include "VertexArray.h"
 
 #ifdef PLATFORM_WIN64
 #define WORKING_DIRECTORY ""
 #elif PLATFORM_LINUX64
 #define WORKING_DIRECTORY "TestApplication/"
 #endif
-
-#define GlCall(x) x;\
-while (unsigned int error = glGetError())\
-Logger::LogError("(" + std::to_string(error) + ") in " + #x + " " + __FILE__ + ":" + std::to_string(__LINE__));
 
 class Quad
 {
@@ -58,9 +58,9 @@ class TestApplication : public Application
 {
 private:
 	Quad quad;
-	unsigned int buffer{};
-	unsigned int ibo{};
-	unsigned int vao{};
+	VertexBuffer vb{};
+	IndexBuffer ib{};
+	VertexArray va{};
 	unsigned int basicShader{};
 	int colorUniformLocation{};
 	int mvpUniformLocation{};
@@ -73,7 +73,7 @@ public:
 								  Vector2(50.0f, 50.0f),
 								  Vector2(-50.0f, 50.0f))),
 						step(Vector2(20.f, 5.f)),
-						direction(Vector2(step.x, step.y)) {}
+						direction(Vector2(step.x, step.y)){}
 
 	static std::tuple<std::string, std::string> ParseShader(const std::string& filePath)
 	{
@@ -99,42 +99,42 @@ public:
 		}
 		return { ss[0].str(), ss[1].str() };
 	}
-
+	
 	static unsigned int CompileShader(unsigned int type, const std::string& source)
-	{
-		unsigned int id = GlCall(glCreateShader(type));
+	{		
+		GLCall(unsigned int id = glCreateShader(type));
 		const char* src = source.c_str();
-		GlCall(glShaderSource(id, 1, &src, nullptr));
-		GlCall(glCompileShader(id));
+		GLCall(glShaderSource(id, 1, &src, nullptr));
+		GLCall(glCompileShader(id));
 
 		int result;
-		GlCall(glGetShaderiv(id, GL_COMPILE_STATUS, &result));
+		GLCall(glGetShaderiv(id, GL_COMPILE_STATUS, &result));
 		if (result == GL_FALSE)
 		{
 			int length;
-			GlCall(glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length));
+			GLCall(glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length));
 			char* message = (char*)alloca(length * sizeof(char));
-			GlCall(glGetShaderInfoLog(id, length, &length, message));
+			GLCall(glGetShaderInfoLog(id, length, &length, message));
 			Logger::LogError("Failed to compile shader! %s\n", message);
-			GlCall(glDeleteShader(id));
+			GLCall(glDeleteShader(id));
 			return 0;
 		}
 
 		return id;
 	}
-
+	
 	static unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader)
 	{
-		unsigned int program = GlCall(glCreateProgram());
+		GLCall(unsigned int program = glCreateProgram());
 		unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
 		unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
-		GlCall(glAttachShader(program, vs));
-		GlCall(glAttachShader(program, fs));
-		GlCall(glLinkProgram(program));
-		GlCall(glValidateProgram(program));
+		GLCall(glAttachShader(program, vs));
+		GLCall(glAttachShader(program, fs));
+		GLCall(glLinkProgram(program));
+		GLCall(glValidateProgram(program));
 
-		GlCall(glDeleteShader(vs));
-		GlCall(glDeleteShader(fs));
+		GLCall(glDeleteShader(vs));
+		GLCall(glDeleteShader(fs));
 
 		return program;
 	}
@@ -151,30 +151,29 @@ public:
 		}
 		Logger::Log("GL version: %s\n", glGetString(GL_VERSION));
 
-		GlCall(glGenVertexArrays(1, &vao));
-		GlCall(glGenBuffers(1, &buffer));
-		GlCall(glGenBuffers(1, &ibo));
+		ib.Generate();
+		vb.Generate();
+		va.Generate();
 
-		GlCall(glBindVertexArray(vao));
+		va.Bind();
+		VertexBufferLayout layout;
+		layout.Push<float>(2);
+		va.AddBuffer(vb, layout);
+		va.Unbind();
+
+		ib.Bind();
+		ib.SetData(quad.GetIndices(), 6);
+		ib.Unbind();
 		
-		GlCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));
-		GlCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
-		GlCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), quad.GetIndices(), GL_DYNAMIC_DRAW));
-		GlCall(glEnableVertexAttribArray(0));
-		GlCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr));
 		// glVertexAttribPointer(attribute index, elements count, GL_FLOAT, normalize (for 0 .. 255 byte or smth),
 		// size of vertex in bytes (includes texture coords), starting index (in bytes));
 
-		GlCall(glBindVertexArray(0));
-
-		GlCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
-		GlCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
-		GlCall(glUseProgram(0));
+		GLCall(glUseProgram(0));
 
 		auto[vertexShaderSource, fragmentShaderSource] = ParseShader(WORKING_DIRECTORY "res/shaders/Basic.shader");
 		basicShader = CreateShader(vertexShaderSource, fragmentShaderSource);
-		colorUniformLocation = GlCall(glGetUniformLocation(basicShader, "u_color"));
-		mvpUniformLocation = GlCall(glGetUniformLocation(basicShader, "u_mvp"));
+		GLCall(colorUniformLocation = glGetUniformLocation(basicShader, "u_color"));
+		GLCall(mvpUniformLocation = glGetUniformLocation(basicShader, "u_mvp"));
 
 		return true;
 	}
@@ -182,9 +181,9 @@ public:
 	bool OnUpdate() override
 	{
 		// Logger::Log("Running...");
-		
-		auto w = (float)window->GetWidth();
-		auto h = (float)window->GetHeight();
+
+		const auto w = (float)window->GetWidth();
+		const auto h = (float)window->GetHeight();
 
 		if (quad.position.x > w) direction.x = -step.x;
 		else if (quad.position.x < 0) direction.x = step.x;
@@ -197,10 +196,10 @@ public:
 		static unsigned int* indices = quad.GetIndices();
 		Vector2 positionNormalized = quad.position.Normalized();
 
-		GlCall(glClear(GL_COLOR_BUFFER_BIT));
+		GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
-		GlCall(glUseProgram(basicShader));
-		GlCall(glUniform4f(colorUniformLocation, positionNormalized.x, 10.0f, positionNormalized.y, 1.0f));
+		GLCall(glUseProgram(basicShader));
+		GLCall(glUniform4f(colorUniformLocation, positionNormalized.x, 10.0f, positionNormalized.y, 1.0f));
 		
 		float mvpMatrix[16] =
 		{
@@ -209,21 +208,22 @@ public:
 			0,	0,	1,	0,
 			0,	0,	0,	 1,
 		};
-		GlCall(glUniformMatrix4fv(mvpUniformLocation, 1, GL_TRUE, mvpMatrix));
+		GLCall(glUniformMatrix4fv(mvpUniformLocation, 1, GL_TRUE, mvpMatrix));
 
-		GlCall(glBindVertexArray(vao));
-		GlCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));
-		GlCall(glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), positions, GL_DYNAMIC_DRAW));
-		// glBufferData(GL_ARRAY_BUFFER, size of data we're pushing, the data itself, can be static, dynamic.. see documentation);
-		GlCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
-		GlCall(glBindVertexArray(0));
+		vb.Bind();
+		vb.SetData(positions, 8 * sizeof(float));
+		vb.Unbind();
+
+		va.Bind();
+		ib.Bind();
+		GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
 		return true;
 	}
 
 	bool OnExit() override
 	{
-		GlCall(glDeleteProgram(basicShader));
+		GLCall(glDeleteProgram(basicShader));
 		Logger::Log("Stopped TestApplication");
 		return true;
 	}
